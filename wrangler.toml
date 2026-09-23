@@ -1,0 +1,12 @@
+# Cloudflare Worker that fronts the game data bucket (ADR-015).
+#
+# Deploy: `bunx wrangler deploy`
+# The bucket stays private: the Worker reads it through this binding.
+name = "vicecity-data"
+main = "worker/vc-data.js"
+compatibility_date = "2026-09-22"
+account_id = "924de9c1399b8d46006e6ec66059f2ba"
+
+[[r2_buckets]]
+binding = "VC"
+bucket_name = "vicecity"
