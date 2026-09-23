@@ -1,0 +1,272 @@
+<script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { pets, type PetKey } from '@/data/portfolio'
+import { prefersReducedMotion } from '@/composables/useReveal'
+
+// Timing and layer behavior ported from mgGlitch (hmongouachon/mgGlitch) with the
+// reference options: glitch1 10-100 ms, glitch2 10-300 ms, scale + 'hue' blend.
+// Two overlays get random clip rects and offsets on independent timers, so slices
+// appear and disappear organically instead of cycling on a fixed tempo.
+const GLITCH_A_MIN_MS = 10
+const GLITCH_A_MAX_MS = 100
+const GLITCH_B_MIN_MS = 10
+const GLITCH_B_MAX_MS = 300
+
+interface PortraitGlitchProps {
+  alt?: string
+  activePet?: PetKey | null
+}
+
+const props = withDefaults(defineProps<PortraitGlitchProps>(), {
+  alt: 'Portrait',
+  activePet: null,
+})
+
+const { t } = useI18n()
+
+const root = ref<HTMLElement | null>(null)
+
+/**
+ * Tap/click on the portrait cycles base -> rocco -> rugal -> base. Hover on the
+ * names still wins while active (displayedPet), and the tap choice remains
+ * after the pointer leaves.
+ */
+const tappedPet = ref<PetKey | null>(null)
+
+const displayedPet = computed<PetKey | null>(() => props.activePet ?? tappedPet.value)
+
+const TAP_CYCLE: ReadonlyArray<PetKey | null> = [null, 'rocco', 'rugal']
+
+function handlePortraitTap() {
+  const next = (TAP_CYCLE.indexOf(tappedPet.value) + 1) % TAP_CYCLE.length
+  tappedPet.value = TAP_CYCLE[next]
+}
+
+type UrlModule = { default?: string }
+
+const portraitModules = import.meta.glob('@/assets/me/portrait_*.webp', { eager: true })
+const portraitMasterModule = import.meta.glob('@/assets/me/portrait_master.jpg', { eager: true })
+
+const toUrl = (mod: unknown): string => (mod as UrlModule)?.default ?? ''
+
+const portraitVariants = Object.values(portraitModules)
+  .map(toUrl)
+  .map(url => {
+    const match = /_(\d+)w/.exec(url)
+    return match ? { url, width: Number(match[1]) } : null
+  })
+  .filter((entry): entry is { url: string; width: number } => entry !== null)
+  .sort((a, b) => a.width - b.width)
+
+const portraitSrc =
+  portraitVariants[portraitVariants.length - 1]?.url ||
+  toUrl(Object.values(portraitMasterModule)[0])
+const portraitSrcset = portraitVariants.map(item => `${item.url} ${item.width}w`).join(', ')
+const portraitSizes = '(min-width: 768px) 288px, calc(100vw - 4rem)'
+
+/**
+ * All three photos are permanent layers (base + one per pet): showing/hiding is
+ * opacity only, so nothing reloads and every transition fades (CODING_STANDARDS
+ * §8: hide with CSS, never remount, when the swap must be smooth). Pet photos
+ * resolve on demand but are prefetched at idle right after mount, so by the
+ * first tap the <img> is loaded and the fade is real instead of a pop-in.
+ */
+const petPhotos = ref<Partial<Record<PetKey, string>>>({})
+
+const activePetAlt = computed(() => {
+  const pet = pets.find(item => item.key === displayedPet.value)
+  return pet ? t(pet.photoAltKey) : ''
+})
+
+function resolvePetPhoto(pet: PetKey): void {
+  if (petPhotos.value[pet]) return
+  const entry = pets.find(item => item.key === pet)
+  if (!entry) return
+  void entry.loadPhoto().then(module => {
+    petPhotos.value[pet] = module.default
+  })
+}
+
+watch(
+  () => displayedPet.value,
+  pet => {
+    if (pet) resolvePetPhoto(pet)
+  },
+  { immediate: true },
+)
+
+let idleId: number | null = null
+
+onMounted(() => {
+  // Prefetch both beast photos when the browser is idle: first tap already has
+  // them decoded, so the crossfade is visible from the very first transition.
+  const prefetch = () => {
+    resolvePetPhoto('rocco')
+    resolvePetPhoto('rugal')
+  }
+  if (typeof window.requestIdleCallback === 'function') {
+    idleId = window.requestIdleCallback(prefetch, { timeout: 3000 })
+  } else {
+    idleId = window.setTimeout(prefetch, 1500)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (idleId !== null) {
+    if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleId)
+    else window.clearTimeout(idleId)
+    idleId = null
+  }
+})
+
+const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min
+
+const glitchLayers = (kind: 'a' | 'b'): HTMLElement[] =>
+  root.value ? Array.from(root.value.querySelectorAll(`[data-glitch="${kind}"]`)) : []
+
+const randomClip = () =>
+  `inset(${rand(0, 100)}% ${rand(0, 100)}% ${rand(0, 100)}% ${rand(0, 100)}%)`
+
+let glitchRunning = false
+let timerA: number | undefined
+let timerB: number | undefined
+
+function tickA() {
+  if (!glitchRunning) return
+  const clip = randomClip()
+  const transform = `translate3d(${rand(-8, 8)}px, ${rand(-3, 3)}px, 0)`
+  for (const layer of glitchLayers('a')) {
+    layer.style.clipPath = clip
+    layer.style.transform = transform
+  }
+  timerA = window.setTimeout(tickA, rand(GLITCH_A_MIN_MS, GLITCH_A_MAX_MS))
+}
+
+function tickB() {
+  if (!glitchRunning) return
+  const clip = randomClip()
+  const scale = 1 + rand(0, 4) / 100
+  const transform = `translate3d(${rand(-12, 12)}px, ${rand(-6, 6)}px, 0) scale(${scale})`
+  const filter = `hue-rotate(${rand(0, 60)}deg)`
+  for (const layer of glitchLayers('b')) {
+    layer.style.clipPath = clip
+    layer.style.transform = transform
+    layer.style.filter = filter
+  }
+  timerB = window.setTimeout(tickB, rand(GLITCH_B_MIN_MS, GLITCH_B_MAX_MS))
+}
+
+onMounted(() => {
+  if (prefersReducedMotion()) return
+  glitchRunning = true
+  timerA = window.setTimeout(tickA, rand(GLITCH_A_MIN_MS, GLITCH_A_MAX_MS))
+  timerB = window.setTimeout(tickB, rand(GLITCH_B_MIN_MS, GLITCH_B_MAX_MS))
+})
+
+onBeforeUnmount(() => {
+  glitchRunning = false
+  if (timerA !== undefined) window.clearTimeout(timerA)
+  if (timerB !== undefined) window.clearTimeout(timerB)
+})
+</script>
+
+<template>
+  <div
+    :aria-label="props.alt"
+    ref="root"
+    role="button"
+    tabindex="0"
+    class="relative w-full cursor-pointer overflow-hidden rounded-2xl md:w-72"
+    @click="handlePortraitTap"
+    @keydown.enter.prevent="handlePortraitTap"
+    @keydown.space.prevent="handlePortraitTap"
+  >
+    <!-- Base portrait -->
+    <k-image
+      :src="portraitSrc"
+      :srcset="portraitSrcset"
+      :sizes="portraitSizes"
+      :alt="props.alt"
+      :lazy="false"
+      fit="cover"
+      hover="none"
+      class="size-full object-cover"
+    />
+
+    <!-- mgGlitch-style overlays: always on for the portrait (unless reduced motion) -->
+    <img
+      :src="portraitSrc"
+      :srcset="portraitSrcset"
+      :sizes="portraitSizes"
+      alt=""
+      aria-hidden="true"
+      data-glitch="a"
+      class="portrait-glitch pointer-events-none absolute inset-0 size-full object-cover"
+    />
+    <img
+      :src="portraitSrc"
+      :srcset="portraitSrcset"
+      :sizes="portraitSizes"
+      alt=""
+      aria-hidden="true"
+      data-glitch="b"
+      class="portrait-glitch portrait-glitch--blend pointer-events-none absolute inset-0 size-full object-cover"
+    />
+
+    <!-- One permanent layer per pet: transitions are opacity-only crossfades -->
+    <div
+      v-for="pet in pets"
+      :class="displayedPet === pet.key ? 'opacity-100' : 'opacity-0'"
+      :aria-hidden="displayedPet === pet.key ? undefined : 'true'"
+      :key="pet.key"
+      class="pointer-events-none absolute inset-0 transition-opacity duration-500"
+    >
+      <k-image
+        v-if="petPhotos[pet.key]"
+        :src="petPhotos[pet.key]"
+        :alt="displayedPet === pet.key ? activePetAlt : ''"
+        :lazy="false"
+        fit="cover"
+        hover="none"
+        class="size-full"
+        rounded
+      />
+      <template v-if="petPhotos[pet.key]">
+        <img
+          :src="petPhotos[pet.key]"
+          alt=""
+          aria-hidden="true"
+          data-glitch="a"
+          class="portrait-glitch pointer-events-none absolute inset-0 size-full object-cover"
+        />
+        <img
+          :src="petPhotos[pet.key]"
+          alt=""
+          aria-hidden="true"
+          data-glitch="b"
+          class="portrait-glitch portrait-glitch--blend pointer-events-none absolute inset-0 size-full object-cover"
+        />
+      </template>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+/* Native CSS is required here: clip-path and mix-blend-mode are not expressible with
+   utilities (CODING_STANDARDS §7.6, documented exception). The clip/transform/filter
+   values are driven by JS (mgGlitch timing), not by @keyframes. */
+.portrait-glitch {
+  will-change: clip-path, transform;
+}
+
+.portrait-glitch--blend {
+  mix-blend-mode: hue;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait-glitch {
+    display: none;
+  }
+}
+</style>
