@@ -14,10 +14,10 @@ dist-ssr
 *.local
 
 # Environment and credentials (R2 migration, deploy tokens): never versioned.
+# .env.production holds the public VITE_* URLs; on Netlify they live in the site
+# configuration and the CI build injects them from there.
 .env
 .env.*
-!.env.example
-!.env.production
 
 # Netlify CLI local state (site link), never versioned.
 .netlify/

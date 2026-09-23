@@ -1,6 +1,6 @@
 # Portafolio
 
-Portafolio personal de César Andrés Ríos Valencia, desarrollador Full Stack (Cali, Colombia).
+Portafolio personal de César Andrés Ríos Valencia, Desarrollador Full Stack.
 
 ## Stack
 
@@ -8,3 +8,4 @@ Portafolio personal de César Andrés Ríos Valencia, desarrollador Full Stack (
 - Tailwind CSS v4
 - vue-router + vue-i18n (ES/EN)
 - GSAP + Lenis
+- Khatarsiss

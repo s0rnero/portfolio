@@ -1,0 +1,61 @@
+# Portfolio deploy pipeline: verify (lint + format), build with the site's
+# environment variables, and publish dist/ to Netlify.
+#
+# The VITE_* build variables live in the Netlify site configuration, not in this
+# repository: `netlify build` fetches them from Netlify and runs the command
+# declared in netlify.toml (bun run build) with them injected. Locally,
+# .env.production (never committed) keeps serving the same purpose.
+#
+# NOTE: The whole job is intentionally disabled (`if: false` below). `khatarsis`
+# resolves from a local tarball outside this repository (package.json ->
+# file:../khatarsis/...), so CI cannot run `bun install` yet. Re-enable the job
+# by deleting the `if: false` line once khatarsis is published to npm or its
+# tarball is committed to the repo.
+name: Deploy to Netlify
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Verify and publish to Netlify
+    runs-on: ubuntu-latest
+    if: false # khatarsis tarball lives outside the repo; CI install fails until resolved.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: bun run lint:check
+
+      - name: Format check
+        run: bun run format:check
+
+      # Fetches the site's environment variables from Netlify and runs the
+      # netlify.toml build command (bun run build) with them injected.
+      - name: Build with the site environment
+        uses: netlify/actions/cli@master
+        with:
+          args: build
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+      - name: Publish to Netlify
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=dist --prod
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
