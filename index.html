@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Icons resolve on demand through the Iconify API: warm the connection up early. -->
+    <link rel="preconnect" href="https://api.iconify.design" />
+    <!-- The metadata below is static and host independent: the canonical link and the
+         absolute URLs (og:url, og:image, sitemap) are added at runtime from the origin
+         the site is served from, so nothing here has to be replaced before publishing. -->
+    <meta
+      name="description"
+      content="Portafolio de César Andrés Ríos Valencia, desarrollador Full Stack en Cali, Colombia. Vue, Angular, Spring Boot, Node.js, PL/SQL, MongoDB, Docker y Kubernetes."
+    />
+    <meta name="author" content="César Andrés Ríos Valencia" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="César Andrés Ríos Valencia" />
+    <meta property="og:title" content="César Andrés Ríos Valencia — Desarrollador Full Stack" />
+    <meta
+      property="og:description"
+      content="Desarrollador Full Stack en Cali, Colombia. Vue, Angular, Spring Boot, Node.js, PL/SQL, MongoDB, Docker y Kubernetes."
+    />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="César Andrés Ríos Valencia — Desarrollador Full Stack" />
+    <meta
+      name="twitter:description"
+      content="Desarrollador Full Stack en Cali, Colombia. Vue, Angular, Spring Boot, Node.js, PL/SQL, MongoDB, Docker y Kubernetes."
+    />
+    <title>portfolio</title>
+    <!-- Structured data: Person plus WebSite. `url` and `image` are intentionally left
+         out because they must be absolute and the production domain is not defined yet. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "#person",
+            "name": "César Andrés Ríos Valencia",
+            "givenName": "César Andrés",
+            "familyName": "Ríos Valencia",
+            "jobTitle": "Desarrollador Full Stack",
+            "email": "mailto:cesarandresriosvalen@gmail.com",
+            "telephone": "+57 305 450 1829",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Cali",
+              "addressRegion": "Valle del Cauca",
+              "addressCountry": "CO"
+            },
+            "knowsLanguage": ["es", "en"],
+            "knowsAbout": [
+              "Vue.js",
+              "Angular",
+              "React",
+              "TypeScript",
+              "Quasar",
+              "Tailwind CSS",
+              "Java",
+              "Spring Boot",
+              "Spring WebFlux",
+              "Node.js",
+              "NestJS",
+              "REST API",
+              "Microservices",
+              "PL/SQL",
+              "SQL Server",
+              "MongoDB",
+              "PostgreSQL",
+              "Docker",
+              "Kubernetes",
+              "CI/CD",
+              "Azure",
+              "AWS",
+              "Oracle Cloud"
+            ],
+            "sameAs": ["https://github.com/s0rnero", "https://www.linkedin.com/in/dev-carv/"]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "#website",
+            "name": "César Andrés Ríos Valencia — Portafolio",
+            "inLanguage": "es-CO",
+            "author": { "@id": "#person" },
+            "publisher": { "@id": "#person" }
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- Diagnóstico de rendimiento en dispositivo real: se carga solo con `?perf=1`.
+         Va aparte del bundle para que funcione aunque la aplicación no llegue a montar
+         (ver public/diag.js). Sin el parámetro no se descarga nada. -->
+    <script>
+      if (new URLSearchParams(window.location.search).has('perf')) {
+        var diag = document.createElement('script')
+        diag.src = '/diag.js'
+        diag.defer = true
+        document.head.appendChild(diag)
+      }
+    </script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

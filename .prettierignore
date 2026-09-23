@@ -1,0 +1,8 @@
+dist
+node_modules
+.agents
+.freebuff
+bun.lock
+package-lock.json
+src/vendor
+public/game
