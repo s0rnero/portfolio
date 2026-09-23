@@ -1,0 +1,42 @@
+{
+  "name": "agents-setup-sorno",
+  "version": "1.1.0",
+  "defaultOrigin": "https://github.com/s0rnero/agents.git",
+  "description": "Harness generico de agentes compartido entre repositorios. Este manifest es la fuente de verdad de install/update: nucleo se sobrescribe, por-repo solo se crea si falta, generados se regeneran, preservados nunca se tocan.",
+  "core": [
+    ".agents/WORKFLOW.md",
+    ".agents/RULES.md",
+    ".agents/PLANS.md",
+    ".agents/plans/README.md",
+    ".agents/orchestrator/instructions.md",
+    ".agents/subagents/enrichment-process.md",
+    ".agents/subagents/executor.md",
+    ".agents/subagents/reviewer.md",
+    ".agents/skills/README.md",
+    ".agents/bootstrap/INSTALL.md",
+    ".agents/decisions/README.md",
+    ".agents/templates/plan.md",
+    ".agents/templates/adr.md",
+    ".agents/manifest.json",
+    "scripts/setup.mjs",
+    "scripts/verify.mjs",
+    "scripts/install.sh"
+  ],
+  "perRepo": [
+    ".agents/AGENTS.md",
+    ".agents/CODING_STANDARDS.md",
+    ".agents/DESIGN.md"
+  ],
+  "generated": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    ".cursorrules",
+    ".github/copilot-instructions.md"
+  ],
+  "preserved": [
+    ".agents/plans/",
+    ".agents/decisions/",
+    ".agents/skills/"
+  ],
+  "origin": "https://github.com/s0rnero/agents.git"
+}
