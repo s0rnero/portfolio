@@ -80,20 +80,20 @@ const handleGoToAbout = () => {
     class="relative flex min-h-screen items-center overflow-hidden pt-16 md:pt-0"
   >
     <div class="relative z-10 flex w-full flex-col items-center gap-4">
-      <h1 class="text-center text-5xl font-black tracking-tight xs:text-6xl" data-hero>
+      <p class="text-center text-5xl font-black tracking-tight xs:text-6xl" data-hero>
         <span class="text-4xl xs:text-5xl"> {{ `${t('hero.greeting')} ` }} </span>
         <glitch-text
           :text="`${profile.firstName} ${profile.lastName}`"
           @mouseenter="setHover(true)"
           @mouseleave="setHover(false)"
         />
-      </h1>
-      <p
+      </p>
+      <h1
         class="text-center text-4xl font-black text-violet-600 xs:text-5xl dark:text-violet-300"
         data-hero
       >
         {{ t('hero.role') }}
-      </p>
+      </h1>
       <p class="max-w-2xl text-justify leading-relaxed" data-hero>
         {{ t('hero.description') }}
       </p>
