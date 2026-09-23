@@ -2,7 +2,7 @@ import { computed, onScopeDispose, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { NAV_SECTIONS } from '@/router'
-import { isExperienceVisible } from './useViceCityGame'
+import { isExperienceVisible } from './useVCGame'
 
 const TITLE_SEPARATOR = '★'
 
@@ -32,9 +32,6 @@ export function useDocumentTitle() {
     if (document.title !== value) document.title = value
   }
 
-  // The reVC engine rewrites document.title ("[vc <tag>] GTA Vice City") on boot and
-  // via emscripten window-title calls. startGame({ title: false }) only silences the
-  // wrapper, so while the game runs we watch the <title> node and restore ours.
   let engineTitleWatcher: MutationObserver | null = null
 
   const stopEngineTitleWatch = () => {

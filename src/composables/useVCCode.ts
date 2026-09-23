@@ -1,6 +1,6 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { isExperienceVisible, openExperience, revealGame } from './useViceCityGame'
+import { isExperienceVisible, openExperience, revealGame } from './useVCGame'
 
 const CODE = 'vicecity'
 const TRICK_DURATION_MS = 3000
@@ -19,7 +19,7 @@ const isTypingTarget = (target: EventTarget | null): boolean => {
   )
 }
 
-export function useViceCityCode() {
+export function useVCCode() {
   const route = useRoute()
   const router = useRouter()
 

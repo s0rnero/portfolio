@@ -55,7 +55,7 @@ const dismissVideoOnEnd = (): void => {
   fadeVideoOut()
 }
 
-export function useViceCityGame() {
+export function useVCGame() {
   return {
     isExperienceVisible,
     isVideoVisible,
