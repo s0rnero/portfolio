@@ -7,11 +7,7 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Icons resolve on demand through the Iconify API: warm the connection up early. -->
     <link rel="preconnect" href="https://api.iconify.design" />
-    <!-- The metadata below is static and host independent: the canonical link and the
-         absolute URLs (og:url, og:image, sitemap) are added at runtime from the origin
-         the site is served from, so nothing here has to be replaced before publishing. -->
     <meta
       name="description"
       content="Portafolio de César Andrés Ríos Valencia, desarrollador Full Stack en Cali, Colombia. Vue, Angular, Spring Boot, Node.js, PL/SQL, MongoDB, Docker y Kubernetes."
@@ -36,8 +32,6 @@
       content="Desarrollador Full Stack en Cali, Colombia. Vue, Angular, Spring Boot, Node.js, PL/SQL, MongoDB, Docker y Kubernetes."
     />
     <title>portfolio</title>
-    <!-- Structured data: Person plus WebSite. `url` and `image` are intentionally left
-         out because they must be absolute and the production domain is not defined yet. -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -99,17 +93,6 @@
   </head>
   <body>
     <div id="app"></div>
-    <!-- Diagnóstico de rendimiento en dispositivo real: se carga solo con `?perf=1`.
-         Va aparte del bundle para que funcione aunque la aplicación no llegue a montar
-         (ver public/diag.js). Sin el parámetro no se descarga nada. -->
-    <script>
-      if (new URLSearchParams(window.location.search).has('perf')) {
-        var diag = document.createElement('script')
-        diag.src = '/diag.js'
-        diag.defer = true
-        document.head.appendChild(diag)
-      }
-    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
