@@ -7,13 +7,6 @@ import { transform } from 'lightningcss'
 import { khatarsisAutoRegister } from 'khatarsis/vite'
 import { vcWeb } from './src/vendor/gtavc-web/vite.js'
 
-/**
- * Baja la sintaxis de rango de las media queries (`width>=40rem`) a la clásica
- * (`min-width: 40rem`) en el CSS final. Tailwind v4 emite range syntax y Safari
- * <= 16.3 (iOS 15 incluido) descarta la regla `@media` completa cuando contiene
- * `width>=`: con ella se iban los breakpoints y el navbar/footer perdian su
- * layout solo en esos navegadores. La sintaxis clasica funciona en todos.
- */
 function legacyMediaQueries(): Plugin {
   return {
     name: 'legacy-media-queries',
@@ -55,19 +48,15 @@ function legacyMediaQueries(): Plugin {
   }
 }
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
     tailwindcss(),
     legacyMediaQueries(),
     khatarsisAutoRegister({ include: ['k-dialog'] }),
-    // Serves the game data from the local port checkout in dev/preview and sets
-    // the COOP/COEP headers the wasm engine needs. Build output is unaffected:
-    // production serves /game/ from its own host (see ADR-013).
     vcWeb({
-      streamedDir: process.env.VC_STREAMED_DIR ?? 'C:/Users/s0rno/Desktop/Nueva carpeta/streamed',
-      assetsDir: process.env.VC_ASSETS_DIR ?? 'C:/Users/s0rno/Desktop/Nueva carpeta/assets',
+      streamedDir: process.env.VC_STREAMED_DIR,
+      assetsDir: process.env.VC_ASSETS_DIR,
     }),
   ],
   resolve: {
