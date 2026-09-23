@@ -1,0 +1,266 @@
+@import 'khatarsis/style.css';
+@import 'tailwindcss';
+
+/* Self-hosted Nunito variable font (weights 200-1000 in a single file). WOFF2 is
+   the only format shipped: it is universally supported and 64% smaller than the
+   source TTF. Native CSS on purpose: `@font-face` has no Tailwind utility
+   equivalent (CODING_STANDARDS §7). */
+@font-face {
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-VariableFont_wght.woff2') format('woff2');
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+.dark .cali-map .leaflet-tile-pane {
+  @apply brightness-90 contrast-125 hue-rotate-180 invert;
+}
+
+.cali-map.leaflet-container {
+  @apply bg-neutral-100 dark:bg-neutral-900;
+}
+
+.cali-map .leaflet-control-attribution {
+  @apply bg-white/70 text-neutral-600 dark:bg-black/60 dark:text-zinc-400;
+}
+
+.cali-map .leaflet-control-zoom a {
+  @apply border-neutral-200 bg-white text-neutral-700 dark:border-white/10 dark:bg-neutral-900 dark:text-zinc-200;
+}
+
+.cali-map .leaflet-control-zoom a:hover {
+  @apply bg-neutral-100 dark:bg-neutral-800;
+}
+
+:root:not(.dark) .project-logo-light-ink {
+  filter: brightness(0);
+}
+
+.cali-map .cali-pin {
+  background: none;
+  border: 0;
+}
+
+.cali-map-card > .content {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.cali-map-card .cali-map-body {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.cali-map-card .cali-map {
+  flex: 1 1 auto;
+  min-height: 224px;
+}
+
+.cali-map-wrap {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.cali-map-wrap .cali-recenter {
+  z-index: 1100;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 40rem) {
+  .projects-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .projects-grid > * {
+    grid-column: span 2;
+  }
+
+  .projects-grid > *:last-child:nth-child(odd) {
+    grid-column-end: -2;
+  }
+}
+
+@media (min-width: 64rem) {
+  .projects-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .projects-grid > * {
+    grid-column: span 2;
+  }
+
+  .projects-grid > *:last-child:nth-child(3n - 1) {
+    grid-column-end: -2;
+  }
+
+  .projects-grid > *:nth-last-child(2):nth-child(3n + 1) {
+    grid-column-end: 4;
+  }
+
+  .projects-grid > *:last-child:nth-child(3n - 2) {
+    grid-column-end: 5;
+  }
+}
+
+.gradual-blur {
+  pointer-events: none;
+  left: 0;
+  right: 0;
+  isolation: isolate;
+}
+
+.gradual-blur--fixed {
+  position: fixed;
+}
+
+.gradual-blur--absolute {
+  position: absolute;
+}
+
+.gradual-blur--top {
+  top: 0;
+}
+
+.gradual-blur--bottom {
+  bottom: 0;
+}
+
+.gradual-blur-inner {
+  pointer-events: none;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  @apply text-sm;
+}
+
+:root {
+  color-scheme: light;
+  --kt-primary-100: oklch(95% 0.03 293);
+  --kt-primary-200: oklch(89% 0.06 293);
+  --kt-primary-300: oklch(81% 0.11 293);
+  --kt-primary-400: oklch(70% 0.17 293);
+  --kt-primary: oklch(54.1% 0.281 293);
+  --kt-primary-500: oklch(54.1% 0.281 293);
+  --kt-primary-600: oklch(47% 0.24 293);
+  --kt-primary-700: oklch(40% 0.19 293);
+  --kt-primary-800: oklch(33% 0.14 293);
+  --kt-primary-900: oklch(26% 0.1 293);
+  --kt-primary-1000: oklch(14% 0.05 293);
+}
+
+body {
+  @apply text-black dark:text-white;
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background-color: rgb(139 92 246 / 0.35);
+}
+
+@theme {
+  /* Single source for the UI typeface: preflight, `font-sans` and `body` all
+     read this. Nunito ships as one variable file (see the `@font-face` above). */
+  --font-sans: 'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --breakpoint-xs: 28rem;
+  --color-scrollbar-track: #ffffff;
+  --color-scrollbar-thumb: #7c3aed;
+  --color-scrollbar-thumb-hover: #8b5cf6;
+  --color-glitch-backdrop: rgb(255 255 255);
+  --color-glitch-shadow: #000;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --color-scrollbar-track: #000000;
+  --color-scrollbar-thumb: #995cd0;
+  --color-scrollbar-thumb-hover: #b27fe3;
+  --color-glitch-backdrop: rgb(0 0 0);
+  --color-glitch-shadow: #fff;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
+  }
+}
+
+::-webkit-scrollbar {
+  @apply size-3 bg-scrollbar-track;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-scrollbar-track;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-scrollbar-thumb;
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-scrollbar-thumb-hover;
+}
+
+::-webkit-scrollbar-button:single-button {
+  display: block;
+  width: 12px;
+  height: 12px;
+  background-color: var(--color-scrollbar-track);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+::-webkit-scrollbar-button:single-button:vertical:decrement {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M5 2.5 8.5 6h-7z' fill='%23995CD0'/></svg>");
+}
+
+::-webkit-scrollbar-button:single-button:vertical:increment {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M5 7.5 1.5 4h7z' fill='%23995CD0'/></svg>");
+}
+
+::-webkit-scrollbar-button:single-button:horizontal:decrement {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2.5 5 6 1.5v7z' fill='%23995CD0'/></svg>");
+}
+
+::-webkit-scrollbar-button:single-button:horizontal:increment {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M7.5 5 4 8.5v-7z' fill='%23995CD0'/></svg>");
+}
+
+::-webkit-scrollbar-button:single-button:vertical:decrement:hover {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M5 2.5 8.5 6h-7z' fill='%23B27FE3'/></svg>");
+}
+
+::-webkit-scrollbar-button:single-button:vertical:increment:hover {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M5 7.5 1.5 4h7z' fill='%23B27FE3'/></svg>");
+}
+
+::-webkit-scrollbar-button:single-button:horizontal:decrement:hover {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2.5 5 6 1.5v7z' fill='%23B27FE3'/></svg>");
+}
+
+::-webkit-scrollbar-button:single-button:horizontal:increment:hover {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M7.5 5 4 8.5v-7z' fill='%23B27FE3'/></svg>");
+}
+
+/* Third-party game layer: the library injects `.vc-bar` and `.vc-msg` inside
+   its own root, so Tailwind utilities cannot reach those selectors (native CSS
+   is the only way). They must paint above the trailer layer (z-50) to report
+   load state and boot failures instead of hiding behind the video. */
+.vc-root .vc-bar,
+.vc-root .vc-msg {
+  z-index: 60;
+}
