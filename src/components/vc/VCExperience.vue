@@ -2,7 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'khatarsis'
-import { isTrickActive } from '@/composables/useViceCityCode'
+import { isTrickActive } from '@/composables/useVCCode'
 import {
   dismissVideoOnEnd,
   isGameReady,
@@ -10,8 +10,8 @@ import {
   isVideoHidden,
   markGameReady,
   markVideoStarted,
-} from '@/composables/useViceCityGame'
-import { startGame } from '@/vendor/gtavc-web/index.js'
+} from '@/composables/useVCGame'
+import { startGame, VERSION } from '@/vendor/gtavc-web/index.js'
 
 const gameHost = ref<HTMLElement | null>(null)
 const video = ref<HTMLVideoElement | null>(null)
@@ -35,6 +35,8 @@ const loadPct = computed(() =>
 const { t } = useI18n()
 
 const BUILD_FILES = ['reVC.wasm', 'reVC.data']
+// Versioned with the engine: bumping the vendor tag invalidates the cache.
+const BUILD_CACHE = `vc-build-${VERSION}`
 const TOAST_VISIBLE_MS = 8000
 const VOLUME_FADE_MS = 3000
 const VOLUME_STEP_MS = 100
@@ -88,8 +90,53 @@ const handleVideoPlaying = () => {
 const withTrailingSlash = (url: string): string => (url.endsWith('/') ? url : `${url}/`)
 
 const fileSize = async (url: string): Promise<number> => {
+  // Cache hit carries its own content-length: no HEAD request needed.
+  if (typeof caches !== 'undefined') {
+    try {
+      const hit = await (await caches.open(BUILD_CACHE)).match(url)
+      if (hit) return Number(hit.headers.get('content-length') ?? 0)
+    } catch {
+      // Cache miss: fall through to HEAD.
+    }
+  }
   const head = await fetch(url, { method: 'HEAD' })
   return Number(head.headers.get('content-length') ?? 0)
+}
+
+const cachedFetch = async (url: string): Promise<Response> => {
+  let cache: Cache | null = null
+  if (typeof caches !== 'undefined') {
+    try {
+      cache = await caches.open(BUILD_CACHE)
+      const hit = await cache.match(url)
+      if (hit) return hit
+    } catch {
+      cache = null
+    }
+  }
+  const response = await fetch(url)
+  if (cache && response.ok) {
+    try {
+      await cache.put(url, response.clone())
+    } catch {
+      // Quota exceeded: fall back to the network copy.
+    }
+  }
+  return response
+}
+
+const purgeOldBuildCaches = async (): Promise<void> => {
+  try {
+    if (typeof caches === 'undefined') return
+    const names = await caches.keys()
+    await Promise.all(
+      names
+        .filter(name => name.startsWith('vc-build-') && name !== BUILD_CACHE)
+        .map(name => caches.delete(name)),
+    )
+  } catch {
+    // Cache cleanup is best-effort.
+  }
 }
 
 const preloadBuildFile = async (
@@ -97,7 +144,7 @@ const preloadBuildFile = async (
   finishedBytes: number,
   totalBytes: number,
 ): Promise<number> => {
-  const response = await fetch(url)
+  const response = await cachedFetch(url)
   if (!response.ok || !response.body) throw new Error(`preload failed: ${url}`)
   const reader = response.body.getReader()
   let loadedBytes = 0
@@ -128,6 +175,7 @@ const handleStartGame = async (): Promise<void> => {
   const host = gameHost.value
   if (!host || hasGameStarted.value) return
   hasGameStarted.value = true
+  await purgeOldBuildCaches()
   const base = withTrailingSlash(readGameUrl('VITE_VC_BUILD_URL', '/game/build/'))
   isPreloading.value = true
   buildPct.value = 0
