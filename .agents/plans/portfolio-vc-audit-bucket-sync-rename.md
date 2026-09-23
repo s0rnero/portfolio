@@ -1,17 +1,18 @@
 ---
 name: portfolio-vc-audit-bucket-sync-rename
-status: READY
+status: EXECUTED
 type: maintenance
 domain: portfolio
 owner_rules: .agents
 created: 2026-09-23 12:00
 enriched: 2026-09-23
 ready: 2026-09-23
+executed: 2026-09-23
 ---
 
 # Plan: Auditoria VC — sync al repo del juego + renombre a VC + limpieza
 
-> Compuerta atendida 2026-09-23: frase explicita **"enriquece el plan"** (`PENDING -> ENRICHED`). Estado actual **`ENRICHED`**, pendiente revision critica del orquestador + visto bueno del usuario antes de `READY`. No se ejecuto codigo, Git, borrados ni scripts bloqueados. El plan `portfolio-glitch-cursor-lag-git-recommit` no se toca (sigue en `ENRICHED`).
+> Estado **`EXECUTED`** 2026-09-23 (compuertas "enriquece el plan" y "ejecuta el plan" atendidas). `CLOSED` pendiente de revision de cierre + confirmacion visual del usuario.
 
 ## Objetivo (original + ajustes 2026-09-23)
 
@@ -97,9 +98,7 @@ ready: 2026-09-23
 
 ## Cierre (memoria persistente)
 
-> Completar al cerrar. Sin esto no hay `CLOSED` (DoD).
-
-- Que cambio: [pendiente]
-- Verificacion: [pendiente — comando ejecutado y resultado, o pendiente con motivo]
-- Resultado: [pendiente]
-- Pendientes: [pendiente]
+- Que cambio (verificado 2026-09-23): D renombre a `vc/`+`VC*`+`useVC*` con imports y exports actualizados; E `BUILD_CACHE` versionado + `cachedFetch`/`purgeOldBuildCaches` en el shell (sin tocar motor ni IDB); B2 absolutas fuera de `vite.config.ts` + `.env.example`; C borrada `ViceCityView.vue` (trailer ya ausente); G borrado `diag.js` + loader `?perf` + `?q=`/`vc-quality`/guardado; F ~140 lineas de comentarios fuera salvo Apache + licencia vue-bits + headers `.env`/worker + `capture Enter`; B copia a `Nueva carpeta/portfolio-sync/` (8 ficheros).
+- Verificacion: `rg` en cero (comentarios F, rutas viejas, absolutas, harness) salvo vitales/licencias; `bun run lint:check` 0, `format:check` 0, `build` 0 (chunk `VCExperience-*` OK); 7 commits EN con `s0rnero`, sin push. No se subio tgz (datos intactos) ni se desplego worker (sin credencial R2, y no hacia falta).
+- Resultado: pendiente revision visual del usuario (truco + juego + mapa) para `CLOSED`.
+- Pendientes: revision visual; push manual; `CLOSED` con reviewer.
