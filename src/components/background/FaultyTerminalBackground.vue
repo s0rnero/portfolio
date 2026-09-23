@@ -34,16 +34,9 @@ interface FaultyTerminalBackgroundProps {
   tint?: string
   mouseReact?: boolean
   mouseStrength?: number
-  /** Con `false` el bucle se detiene porque nada lo ve (lo tapa algo opaco).
-   *  La capa sigue montada y con su ultimo fotograma pintado, asi que volver a
-   *  activarla no cuesta compilar ni provoca un salto a negro. */
   active?: boolean
   fps?: number
   dpr?: number
-  /** Escala de dibujo (1 = nativo, 0.5 = un cuarto de pixeles). Se aplica en
-   *  `resize()` dando al canvas un backing store menor que el CSS estira: cambia
-   *  en caliente, sin recrear el contexto WebGL (el `dpr` de khatarsis se fija
-   *  al crear el renderer). */
   drawScale?: number
   pageLoadAnimation?: boolean
   brightness?: number
@@ -298,11 +291,7 @@ const props = withDefaults(defineProps<FaultyTerminalBackgroundProps>(), {
   mouseReact: true,
   mouseStrength: 0.5,
   active: true,
-  /** 0 = sin limite. El shader llama a `getColor()` tres veces por pixel: en un
-   *  telefono conviene gastarlo a 30 que intentar 60 y no llegar. */
   fps: 0,
-  /** El cap de pixeles lo pone el navegador: con dpr 1 de pantalla no hay 2x de
-   *  gratis (antes se pasaba 2 fijo y se dibujaba a 2x incluso en dpr 1). */
   dpr: typeof window === 'undefined' ? 1 : Math.min(window.devicePixelRatio || 1, 2),
   drawScale: 1,
   pageLoadAnimation: true,
@@ -392,9 +381,6 @@ function handleVisibility() {
 function resize() {
   const ctn = container.value
   if (!ctn || !renderer || !program || !mesh) return
-  // drawScale reduce el backing store y el CSS estira el canvas: menos pixeles
-  // de shader con el mismo tamano visual. khatarsis no permite cambiar su dpr
-  // interno en vivo, asi que la escala fina va aqui.
   const w = Math.max(1, Math.floor(ctn.offsetWidth * props.drawScale))
   const h = Math.max(1, Math.floor(ctn.offsetHeight * props.drawScale))
   renderer.setSize(w, h)
@@ -453,7 +439,6 @@ function startLoop() {
   rafId = requestAnimationFrame(frame)
 }
 
-/** Cambio de escala de dibujo en caliente: basta con volver a medir. */
 watch(
   () => props.drawScale,
   () => {
@@ -463,7 +448,6 @@ watch(
 
 watch(theme, applyThemeUniforms)
 
-/** Montado y dibujando no son lo mismo: `active` para el bucle sin desmontar. */
 watch(
   () => props.active,
   value => {
@@ -524,8 +508,6 @@ onMounted(() => {
     largeScreenQuery.addEventListener('change', handleScaleChange)
     mediumScreenQuery.addEventListener('change', handleScaleChange)
 
-    // Un fotograma se pinta siempre: es lo que se ve si la capa empieza oculta
-    // (el intro del CRT la tapa) y luego se activa.
     if (prefersReducedMotion() || props.pause) {
       program.setUniform('iTime', 0)
       program.setUniform('uPageLoadProgress', 1)

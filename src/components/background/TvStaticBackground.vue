@@ -32,8 +32,6 @@ interface TvStaticBackgroundProps {
   mouseStrength?: number
   pause?: boolean
   overlay?: boolean
-  /** Si es `false` el bucle de dibujo se detiene del todo: la capa sigue
-   *  montada (el programa ya esta compilado) pero no gasta ni un frame. */
   active?: boolean
   fps?: number
   dpr?: number
@@ -232,7 +230,6 @@ function handleVisibility() {
   }
 }
 
-/** La capa solo es visible durante el flash; el resto del tiempo no se dibuja. */
 watch(
   () => props.active,
   value => {
@@ -250,8 +247,6 @@ watch(
 function resize() {
   const ctn = container.value
   if (!ctn || !renderer || !program) return
-  // Con `v-show` el contenedor queda en `display: none`: no hay tamano que medir
-  // ni nada que redimensionar. Al volver a mostrarlo el observer avisa de nuevo.
   if (!ctn.offsetWidth || !ctn.offsetHeight) return
   renderer.setSize(ctn.offsetWidth, ctn.offsetHeight)
   const { canvas } = renderer

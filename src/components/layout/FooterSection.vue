@@ -25,8 +25,6 @@ const handleLogoClick = () => {
           class="flex items-center"
           @click="handleLogoClick"
         >
-          <!-- Explicit width prop: the grid `figure` gets a fixed box, so iOS 15
-               never falls back to the SVG default size (logo looked centered). -->
           <k-image
             :src="logo"
             :lazy="false"

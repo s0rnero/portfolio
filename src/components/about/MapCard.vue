@@ -60,9 +60,6 @@ onMounted(async () => {
   const container = mapContainer.value
   if (!container) return
 
-  // The map only renders inside About (below the fold): the dynamic import keeps
-  // Leaflet's code and its stylesheet out of the initial bundle. Both are awaited
-  // before the map is created, so it never paints without its styles.
   const L = await import('leaflet')
   await import('leaflet/dist/leaflet.css')
 
@@ -71,20 +68,15 @@ onMounted(async () => {
     attributionControl: false,
     minZoom: 3,
     worldCopyJump: true,
-    // The wheel must scroll the page past the map (Leaflet zoom stays on the
-    // +/- control, drag and double click): otherwise the page gets trapped here.
     scrollWheelZoom: false,
   })
 
-  // Show the OSM attribution without the Leaflet prefix (Tile Usage Policy compliant).
   L.control.attribution({ prefix: false }).addTo(map)
 
   L.tileLayer(TILE_URL, {
     maxZoom: 19,
     attribution: TILE_ATTRIBUTION,
     detectRetina: true,
-    // CORS fetch: the COOP/COEP headers the game needs (COEP require-corp)
-    // block cross-origin tiles without it; OSM allows CORS.
     crossOrigin: true,
   }).addTo(map)
 
@@ -95,7 +87,6 @@ onMounted(async () => {
       iconSize: PIN_SIZE,
       iconAnchor: [PIN_SIZE[0] / 2, PIN_SIZE[1]],
     }),
-    // Proper noun: city name is identical in every locale, so it is not translated.
     title: 'Cali',
   }).addTo(map)
 

@@ -12,7 +12,6 @@ export default [
       '.agents/**',
       'scripts/**',
       'src/vendor/**',
-      // Game data served from outside Git (generated Emscripten output).
       'public/game/**',
     ],
   },
@@ -82,7 +81,6 @@ export default [
           ],
         },
       ],
-      // Única fuente de verdad de formato: .prettierrc
       'prettier/prettier': 'error',
     },
   },

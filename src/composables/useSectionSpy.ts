@@ -27,9 +27,6 @@ export function useSectionSpy(
   const route = useRoute()
 
   let frame = 0
-  // The target is read live on every sync (never cached): on fresh loads the
-  // route object can still hold the start location when this runs, and a stale
-  // snapshot would wipe a deep link it never saw.
   const mountedAt = Date.now()
 
   const targetHash = (): string => {
@@ -55,9 +52,6 @@ export function useSectionSpy(
     frame = 0
     const hash = activeHash()
     const target = targetHash()
-    // A deep link (/#about, /projects) that hasn't landed yet: while the page
-    // is still at the top the active section is unknown, so the URL is never
-    // touched. The grace period covers layout settling on fresh loads only.
     if (target !== '' && window.scrollY === 0 && Date.now() - mountedAt < MOUNT_GRACE_MS) return
     if (hash === route.hash) return
     lastSpyNavAt = Date.now()

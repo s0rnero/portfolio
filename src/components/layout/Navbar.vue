@@ -15,7 +15,6 @@ const { t, locale } = useI18n()
 const router = useRouter()
 const { theme } = useTheme()
 
-// Mirrors Tailwind's `sm` (40rem) breakpoint: both values must move together.
 const drawerBreakpoint = 640
 
 const isDrawerOpen = ref(false)
@@ -51,8 +50,6 @@ const handleSectionClick = () => {
         class="flex items-center text-lg font-black tracking-tight text-black select-none dark:text-white"
         @click="handleLogoClick"
       >
-        <!-- Explicit width prop: the grid `figure` gets a fixed box, so iOS 15
-             never falls back to the SVG default size (logo looked centered). -->
         <k-image :src="logo" :lazy="false" :width="32" alt="" fit="contain" class="h-8" />
       </button>
 

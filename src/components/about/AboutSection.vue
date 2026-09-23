@@ -50,8 +50,6 @@ useReveal(root)
             {{ paragraph }}
           </p>
 
-          <!-- Whitespace matters: Vue condenses the newline between these inline nodes into
-               a single space, and the closing segment is glued to "Rugal" on purpose. -->
           <p class="text-justify leading-relaxed text-neutral-700 dark:text-neutral-300">
             {{ t('about.pets.lead') }}
             <glitch-text

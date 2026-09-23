@@ -11,8 +11,6 @@ const props = withDefaults(defineProps<GlitchTextProps>(), {
   hoverOnly: false,
 })
 
-// Additive contract: consumers react to the hover without adding a second listener
-// (the component is the element that actually receives the pointer).
 const emit = defineEmits<{
   hoverStart: []
   hoverEnd: []

@@ -65,12 +65,6 @@ const layers = computed<CSSProperties[]>(() => {
   return result
 })
 
-/**
- * En hardware modesto cada capa de `backdrop-filter` obliga a recomponer el
- * fondo entero, y debajo hay un canvas WebGL que cambia en cada frame. El
- * degradado al color del tema consigue el mismo "el contenido se va" sin
- * ninguna lectura del fondo.
- */
 const usesBackdrop = computed(() => quality.backdropBlur)
 
 const solidStyle = computed<CSSProperties>(() => ({

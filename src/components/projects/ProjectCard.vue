@@ -48,9 +48,6 @@ const initials = computed(() =>
         </div>
       </template>
       <template #title>
-        <!-- h2 and not h3: the reveal keeps the section headings out of the
-             accessibility tree until they scroll into view, so the card titles are
-             the first headings a screen reader meets. -->
         <h2 class="font-bold">
           {{ props.project.name }}
         </h2>

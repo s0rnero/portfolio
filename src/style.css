@@ -1,10 +1,6 @@
 @import 'khatarsis/style.css';
 @import 'tailwindcss';
 
-/* Self-hosted Nunito variable font (weights 200-1000 in a single file). WOFF2 is
-   the only format shipped: it is universally supported and 64% smaller than the
-   source TTF. Native CSS on purpose: `@font-face` has no Tailwind utility
-   equivalent (CODING_STANDARDS §7). */
 @font-face {
   font-family: 'Nunito';
   src: url('./assets/fonts/Nunito-VariableFont_wght.woff2') format('woff2');
@@ -169,8 +165,6 @@ body {
 }
 
 @theme {
-  /* Single source for the UI typeface: preflight, `font-sans` and `body` all
-     read this. Nunito ships as one variable file (see the `@font-face` above). */
   --font-sans: 'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --breakpoint-xs: 28rem;
   --color-scrollbar-track: #ffffff;
@@ -256,10 +250,6 @@ body {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M7.5 5 4 8.5v-7z' fill='%23B27FE3'/></svg>");
 }
 
-/* Third-party game layer: the library injects `.vc-bar` and `.vc-msg` inside
-   its own root, so Tailwind utilities cannot reach those selectors (native CSS
-   is the only way). They must paint above the trailer layer (z-50) to report
-   load state and boot failures instead of hiding behind the video. */
 .vc-root .vc-bar,
 .vc-root .vc-msg {
   z-index: 60;

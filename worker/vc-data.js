@@ -12,8 +12,6 @@ const CACHE_SECONDS = 86400
 
 function baseHeaders() {
   return {
-    // The site fetches cross-origin (Netlify -> this Worker) and runs with
-    // COEP `require-corp`, so the response must be a valid CORS one.
     'access-control-allow-origin': '*',
     'access-control-expose-headers': 'content-length, content-range, accept-ranges, etag',
     'accept-ranges': 'bytes',
@@ -35,15 +33,11 @@ export default {
     }
     if (!key) return new Response('Not found', { status: 404, headers: baseHeaders() })
 
-    // `range` is what the trailer video and the engine's on-demand loader use.
-    // The binding returns range info even for a full get, so the 206 is decided
-    // by the request, not by the object.
     const wantsRange = request.headers.has('range')
     let object = null
     try {
       object = await env.VC.get(key, wantsRange ? { range: request.headers } : undefined)
     } catch (error) {
-      // Unsatisfiable range: 416 without guessing the total size.
       return new Response(null, { status: 416, headers: baseHeaders() })
     }
     if (!object) return new Response('Not found', { status: 404, headers: baseHeaders() })

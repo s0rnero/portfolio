@@ -176,7 +176,6 @@ onBeforeUnmount(() => {
 <template>
   <teleport to="body">
     <div
-      ref="cursorElement"
       v-if="supportsCursor"
       v-show="!isOutside"
       :class="{
@@ -185,6 +184,7 @@ onBeforeUnmount(() => {
         'glitch-cursor--pointer': isPointer,
       }"
       :style="{ transform: `translate3d(${position.x}px, ${position.y}px, 0)` }"
+      ref="cursorElement"
       class="glitch-cursor"
       aria-hidden="true"
     >
@@ -253,7 +253,6 @@ onBeforeUnmount(() => {
   position: fixed;
   top: 0;
   left: 0;
-  /* Above every in-page layer (drawers, toasts, scroll containers): it is the mouse. */
   z-index: 2147483647;
   width: 26px;
   height: 26px;

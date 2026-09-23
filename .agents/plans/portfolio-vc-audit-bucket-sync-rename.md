@@ -1,11 +1,12 @@
 ---
 name: portfolio-vc-audit-bucket-sync-rename
-status: ENRICHED
+status: READY
 type: maintenance
 domain: portfolio
 owner_rules: .agents
 created: 2026-09-23 12:00
 enriched: 2026-09-23
+ready: 2026-09-23
 ---
 
 # Plan: Auditoria VC — sync al repo del juego + renombre a VC + limpieza

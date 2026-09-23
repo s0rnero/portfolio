@@ -1,17 +1,11 @@
-# Response headers for every deploy path (git build, CLI or SDK upload).
-# Single source of truth: netlify.toml points here instead of duplicating them.
-
 /*
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: require-corp
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
 
-# Netlify has no built-in mapping for .webmanifest and serves it as
-# application/octet-stream, which browsers ignore. Declare the real type.
 /manifest.webmanifest
   Content-Type: application/manifest+json
 
-# Hashed build assets never change: cache them for a year.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable

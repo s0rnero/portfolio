@@ -4,10 +4,6 @@ import { useI18n } from 'vue-i18n'
 import { pets, type PetKey } from '@/data/portfolio'
 import { prefersReducedMotion } from '@/composables/useReveal'
 
-// Timing and layer behavior ported from mgGlitch (hmongouachon/mgGlitch) with the
-// reference options: glitch1 10-100 ms, glitch2 10-300 ms, scale + 'hue' blend.
-// Two overlays get random clip rects and offsets on independent timers, so slices
-// appear and disappear organically instead of cycling on a fixed tempo.
 const GLITCH_A_MIN_MS = 10
 const GLITCH_A_MAX_MS = 100
 const GLITCH_B_MIN_MS = 10
@@ -27,11 +23,6 @@ const { t } = useI18n()
 
 const root = ref<HTMLElement | null>(null)
 
-/**
- * Tap/click on the portrait cycles base -> rocco -> rugal -> base. Hover on the
- * names still wins while active (displayedPet), and the tap choice remains
- * after the pointer leaves.
- */
 const tappedPet = ref<PetKey | null>(null)
 
 const displayedPet = computed<PetKey | null>(() => props.activePet ?? tappedPet.value)
@@ -65,13 +56,6 @@ const portraitSrc =
 const portraitSrcset = portraitVariants.map(item => `${item.url} ${item.width}w`).join(', ')
 const portraitSizes = '(min-width: 768px) 288px, calc(100vw - 4rem)'
 
-/**
- * All three photos are permanent layers (base + one per pet): showing/hiding is
- * opacity only, so nothing reloads and every transition fades (CODING_STANDARDS
- * §8: hide with CSS, never remount, when the swap must be smooth). Pet photos
- * resolve on demand but are prefetched at idle right after mount, so by the
- * first tap the <img> is loaded and the fade is real instead of a pop-in.
- */
 const petPhotos = ref<Partial<Record<PetKey, string>>>({})
 
 const activePetAlt = computed(() => {
@@ -99,8 +83,6 @@ watch(
 let idleId: number | null = null
 
 onMounted(() => {
-  // Prefetch both beast photos when the browser is idle: first tap already has
-  // them decoded, so the crossfade is visible from the very first transition.
   const prefetch = () => {
     resolvePetPhoto('rocco')
     resolvePetPhoto('rugal')
@@ -182,7 +164,6 @@ onBeforeUnmount(() => {
     @keydown.enter.prevent="handlePortraitTap"
     @keydown.space.prevent="handlePortraitTap"
   >
-    <!-- Base portrait -->
     <k-image
       :src="portraitSrc"
       :srcset="portraitSrcset"
@@ -194,7 +175,6 @@ onBeforeUnmount(() => {
       class="size-full object-cover"
     />
 
-    <!-- mgGlitch-style overlays: always on for the portrait (unless reduced motion) -->
     <img
       :src="portraitSrc"
       :srcset="portraitSrcset"
@@ -214,7 +194,6 @@ onBeforeUnmount(() => {
       class="portrait-glitch portrait-glitch--blend pointer-events-none absolute inset-0 size-full object-cover"
     />
 
-    <!-- One permanent layer per pet: transitions are opacity-only crossfades -->
     <div
       v-for="pet in pets"
       :class="displayedPet === pet.key ? 'opacity-100' : 'opacity-0'"
@@ -253,9 +232,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-/* Native CSS is required here: clip-path and mix-blend-mode are not expressible with
-   utilities (CODING_STANDARDS §7.6, documented exception). The clip/transform/filter
-   values are driven by JS (mgGlitch timing), not by @keyframes. */
 .portrait-glitch {
   will-change: clip-path, transform;
 }

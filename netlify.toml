@@ -1,7 +1,3 @@
-# Netlify: build with bun, publish the Vite output.
-# Response headers and the SPA fallback live in public/_headers and
-# public/_redirects, so every deploy path (git build, CLI or SDK upload) carries
-# them. This file only configures the build.
 [build]
   command = "bun run build"
   publish = "dist"

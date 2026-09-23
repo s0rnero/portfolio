@@ -44,7 +44,6 @@ export type PetKey = 'rocco' | 'rugal'
 export interface Pet {
   key: PetKey
   photoAltKey: 'about.pets.roccoAlt' | 'about.pets.rugalAlt'
-  /** Deferred on purpose: the beast photos are not part of the entry graph (ADR-011). */
   loadPhoto: () => Promise<{ default: string }>
 }
 
@@ -228,8 +227,6 @@ export const interests: Interest[] = [
   { key: 'games', icon: 'mdi:gamepad-variant' },
 ]
 
-// Rocco and Rugal are proper nouns (same in both locales), so the names live in
-// the template and the visible labels they carry live in the locale files.
 export const pets: Pet[] = [
   {
     key: 'rocco',

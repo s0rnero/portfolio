@@ -22,14 +22,11 @@ const isDark = computed(() => theme.value === 'dark')
 
 const themeTooltip = computed(() => (isDark.value ? t('nav.themeDark') : t('nav.themeLight')))
 
-// Fixed endonyms: identical in every locale by definition, so they are not translated.
 const localeOptions: LocaleOption[] = [
   { label: 'Español', value: 'es' },
   { label: 'English', value: 'en' },
 ]
 
-// Writable computed over the shared locale: two instances stay in sync and the
-// choice is persisted, unlike a local ref that would go stale.
 const selectedLocale = computed<AppLocale>({
   get: () => locale.value as AppLocale,
   set: value => {

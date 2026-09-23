@@ -22,10 +22,6 @@ useSectionSpy(NAV_SECTIONS)
 onMounted(async () => {
   await nextTick()
   requestAnimationFrame(() => ScrollTrigger.refresh())
-  // Fresh loads (reload or shared URL) must land on their section: the router
-  // guard scrolls before this view exists, so restore here once mounted.
-  // Immediate (no animation): an animated restore clears the spy guard
-  // mid-flight and the URL gets "corrected" back to /.
   if (restoreTarget) {
     setTimeout(() => scrollTo(restoreTarget, -80, true), 150)
   }

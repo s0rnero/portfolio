@@ -69,8 +69,6 @@ const router = createRouter({
     })),
     {
       path: '/vicecity',
-      // Legacy deep-link: the game is a state-driven overlay now (the URL never
-      // changes), so the old address lands back home instead of mounting a view.
       redirect: routesMap.main.path,
     },
   ],
