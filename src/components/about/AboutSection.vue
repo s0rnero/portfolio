@@ -70,7 +70,12 @@ useReveal(root)
       </div>
 
       <div class="flex flex-col gap-6 lg:flex-row">
-        <k-card class="backdrop-blur-sm lg:basis-2/3" variant="transparent" rounded>
+        <k-card
+          v-effect="{ type: 'spotlight', size: 77 }"
+          class="backdrop-blur-sm lg:basis-2/3"
+          variant="transparent"
+          rounded
+        >
           <template #title>
             <h2 class="font-bold">{{ t('about.stackTitle') }}</h2>
           </template>

@@ -17,8 +17,8 @@ function derived(lite: boolean): Omit<QualityState, 'lite'> {
   }
   return {
     tvStatic: true,
-    terminalScale: isTouchDevice ? 0.25 : 1,
-    terminalFps: 0,
+    terminalScale: isTouchDevice ? 0.25 : 0.75,
+    terminalFps: isTouchDevice ? 0 : 30,
     backdropBlur: true,
   }
 }

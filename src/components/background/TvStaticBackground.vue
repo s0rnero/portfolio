@@ -145,7 +145,7 @@ function hexToRgb(hex: string): [number, number, number] {
 }
 
 const props = withDefaults(defineProps<TvStaticBackgroundProps>(), {
-  grainScale: 420,
+  grainScale: 200,
   grainSpeed: 15,
   density: 0.75,
   contrast: 0.5,
@@ -166,8 +166,8 @@ const props = withDefaults(defineProps<TvStaticBackgroundProps>(), {
   pause: false,
   overlay: false,
   active: true,
-  fps: 20,
-  dpr: typeof window === 'undefined' ? 1 : Math.min(window.devicePixelRatio || 1, 2),
+  fps: 30,
+  dpr: 1,
 })
 
 const { theme } = useTheme()

@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<GradualBlurProps>(), {
   position: 'top',
   height: '65px',
   strength: 2,
-  divCount: 5,
+  divCount: 3,
   curve: 'ease-out',
   opacity: 1,
   zIndex: 0,

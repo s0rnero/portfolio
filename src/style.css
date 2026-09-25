@@ -254,3 +254,13 @@ body {
 .vc-root .vc-msg {
   z-index: 60;
 }
+
+/* Below-the-fold sections skip rendering until near the viewport
+   (documented native-CSS exception: Tailwind has no content-visibility utility). */
+#about,
+#projects,
+#contact,
+footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}

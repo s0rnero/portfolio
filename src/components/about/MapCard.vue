@@ -118,7 +118,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <k-card class="cali-map-card backdrop-blur-sm" variant="transparent" rounded>
+  <k-card
+    v-effect="{ type: 'spotlight', size: 77 }"
+    class="cali-map-card backdrop-blur-sm"
+    variant="transparent"
+    rounded
+  >
     <template #title>
       <h2 class="flex items-center gap-2 font-bold">
         <k-icon name="mdi:map-marker" aria-hidden="true" />

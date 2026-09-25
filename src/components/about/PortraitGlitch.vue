@@ -4,10 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { pets, type PetKey } from '@/data/portfolio'
 import { prefersReducedMotion } from '@/composables/useReveal'
 
-const GLITCH_A_MIN_MS = 10
-const GLITCH_A_MAX_MS = 100
-const GLITCH_B_MIN_MS = 10
-const GLITCH_B_MAX_MS = 300
+const GLITCH_INTERVAL_MS = 600
 
 interface PortraitGlitchProps {
   alt?: string
@@ -111,22 +108,31 @@ const randomClip = () =>
   `inset(${rand(0, 100)}% ${rand(0, 100)}% ${rand(0, 100)}% ${rand(0, 100)}%)`
 
 let glitchRunning = false
+let isVisible = true
+let observer: IntersectionObserver | null = null
 let timerA: number | undefined
 let timerB: number | undefined
 
+const clearTimers = () => {
+  if (timerA !== undefined) window.clearTimeout(timerA)
+  if (timerB !== undefined) window.clearTimeout(timerB)
+  timerA = undefined
+  timerB = undefined
+}
+
 function tickA() {
-  if (!glitchRunning) return
+  if (!glitchRunning || !isVisible || document.hidden) return
   const clip = randomClip()
   const transform = `translate3d(${rand(-8, 8)}px, ${rand(-3, 3)}px, 0)`
   for (const layer of glitchLayers('a')) {
     layer.style.clipPath = clip
     layer.style.transform = transform
   }
-  timerA = window.setTimeout(tickA, rand(GLITCH_A_MIN_MS, GLITCH_A_MAX_MS))
+  timerA = window.setTimeout(tickA, GLITCH_INTERVAL_MS)
 }
 
 function tickB() {
-  if (!glitchRunning) return
+  if (!glitchRunning || !isVisible || document.hidden) return
   const clip = randomClip()
   const scale = 1 + rand(0, 4) / 100
   const transform = `translate3d(${rand(-12, 12)}px, ${rand(-6, 6)}px, 0) scale(${scale})`
@@ -136,20 +142,49 @@ function tickB() {
     layer.style.transform = transform
     layer.style.filter = filter
   }
-  timerB = window.setTimeout(tickB, rand(GLITCH_B_MIN_MS, GLITCH_B_MAX_MS))
+  timerB = window.setTimeout(tickB, GLITCH_INTERVAL_MS)
+}
+
+const startGlitch = () => {
+  if (prefersReducedMotion()) return
+  glitchRunning = true
+  clearTimers()
+  timerA = window.setTimeout(tickA, GLITCH_INTERVAL_MS)
+  timerB = window.setTimeout(tickB, GLITCH_INTERVAL_MS)
+}
+
+const stopGlitch = () => {
+  glitchRunning = false
+  clearTimers()
+}
+
+const handleVisibilityChange = () => {
+  if (document.hidden) {
+    clearTimers()
+  } else if (isVisible) {
+    startGlitch()
+  }
 }
 
 onMounted(() => {
-  if (prefersReducedMotion()) return
-  glitchRunning = true
-  timerA = window.setTimeout(tickA, rand(GLITCH_A_MIN_MS, GLITCH_A_MAX_MS))
-  timerB = window.setTimeout(tickB, rand(GLITCH_B_MIN_MS, GLITCH_B_MAX_MS))
+  observer = new IntersectionObserver(
+    entries => {
+      isVisible = entries.some(entry => entry.isIntersecting)
+      if (isVisible && !document.hidden) startGlitch()
+      else clearTimers()
+    },
+    { threshold: 0.05 },
+  )
+  if (root.value) observer.observe(root.value)
+  document.addEventListener('visibilitychange', handleVisibilityChange)
+  startGlitch()
 })
 
 onBeforeUnmount(() => {
-  glitchRunning = false
-  if (timerA !== undefined) window.clearTimeout(timerA)
-  if (timerB !== undefined) window.clearTimeout(timerB)
+  stopGlitch()
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
+  observer?.disconnect()
+  observer = null
 })
 </script>
 
@@ -159,7 +194,7 @@ onBeforeUnmount(() => {
     ref="root"
     role="button"
     tabindex="0"
-    class="relative w-full cursor-pointer overflow-hidden rounded-2xl md:w-72"
+    class="relative w-full cursor-pointer overflow-hidden rounded-2xl contain-layout contain-paint md:w-72"
     @click="handlePortraitTap"
     @keydown.enter.prevent="handlePortraitTap"
     @keydown.space.prevent="handlePortraitTap"

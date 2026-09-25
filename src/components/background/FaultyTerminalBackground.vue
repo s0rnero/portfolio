@@ -275,7 +275,7 @@ function prefersReducedMotion() {
 }
 
 const props = withDefaults(defineProps<FaultyTerminalBackgroundProps>(), {
-  scale: 2.5,
+  scale: 1.5,
   gridMul: () => [2, 1],
   digitSize: 1.5,
   timeScale: 0.3,
@@ -284,7 +284,7 @@ const props = withDefaults(defineProps<FaultyTerminalBackgroundProps>(), {
   glitchAmount: 1.5,
   flickerAmount: 1,
   noiseAmp: 1,
-  chromaticAberration: 0.7,
+  chromaticAberration: 0.5,
   dither: 0.7,
   curvature: 0.3,
   tint: '#995CD0',
@@ -292,7 +292,7 @@ const props = withDefaults(defineProps<FaultyTerminalBackgroundProps>(), {
   mouseStrength: 0.5,
   active: true,
   fps: 0,
-  dpr: typeof window === 'undefined' ? 1 : Math.min(window.devicePixelRatio || 1, 2),
+  dpr: typeof window === 'undefined' ? 1 : Math.min(window.devicePixelRatio || 1, 1.5),
   drawScale: 1,
   pageLoadAnimation: true,
   brightness: 0.5,

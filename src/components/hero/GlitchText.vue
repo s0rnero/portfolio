@@ -20,6 +20,9 @@ const ACTIVE_MS = 4000
 const PAUSE_MS = 8000
 
 const isGlitching = ref(false)
+const isVisible = ref(true)
+const root = ref<HTMLElement | null>(null)
+let observer: IntersectionObserver | null = null
 let cycleTimer: number | null = null
 
 const clearCycle = () => {
@@ -67,16 +70,28 @@ const handlePointerLeave = () => {
 }
 
 onMounted(() => {
+  observer = new IntersectionObserver(
+    entries => {
+      isVisible.value = entries.some(entry => entry.isIntersecting)
+    },
+    { threshold: 0 },
+  )
+  if (root.value) observer.observe(root.value)
   if (prefersReducedMotion() || props.hoverOnly) return
   startActivePhase()
 })
 
-onBeforeUnmount(clearCycle)
+onBeforeUnmount(() => {
+  clearCycle()
+  observer?.disconnect()
+  observer = null
+})
 </script>
 
 <template>
   <span
-    :class="{ 'glitch-text--active': isGlitching }"
+    ref="root"
+    :class="{ 'glitch-text--active': isGlitching && isVisible }"
     :data-text="props.text"
     class="glitch-text relative inline-block whitespace-nowrap"
     @pointerenter="handlePointerEnter()"
